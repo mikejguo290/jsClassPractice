@@ -13,6 +13,12 @@ class Network {
       this.data = data;
       this.users = users;
     }
+
+    movieTime(){
+        const dataConsumption=this.users*5
+        const dataRemaining=this.data-dataConsumption;
+        return dataRemaining>=10? true : false;
+    }
   }
 
 /*  1. Add a method movieTime() to the Network class that returns true if there is enough data available to watch a movie, false if there isn’t.
