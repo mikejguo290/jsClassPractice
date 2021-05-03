@@ -65,8 +65,96 @@ function balloonAttack(player1, player2){
 };
 
 // test code for challenge #2
-
+/*
 const p1 = new Player('p1', 5);
 const p2 = new Player('p2', 2);
 const winner = balloonAttack(p1, p2);
 console.log(winner);
+*/
+
+/* 
+Challenge #3. A shift cipher takes a plain text message and shifts each letter forward in the alphabet by a given number. For example, a shift cipher with a shift of 1 
+would turn the string 'hello' to 'ifmmp'.
+
+Create a class ShiftCipher that takes the numerical value of the shift as a constructor parameter. The class should have two methods:
+
+encrypt: takes a plain text string and returns a capitalized string with each letter shifted forward in the alphabet based on the set shift value.
+decrypt: takes an encrypted message and returns a lower case string with each letter shifted back in the alphabet based on the set shift value.
+In both methods, any character outside the alphabet should remain the same.
+But if a character is shifted outside the alphabet in either direction it should be wrapped around to the other side. For example, 
+encrypting a y with a shift of 4 results in C and decrypting an A with a shift of 1 result in z.
+Example:
+const cipher = new ShiftCipher(2);
+cipher.encrypt('I love to code!'); // returns 'K NQXG VQ EQFG!'
+cipher.decrypt('K <3 OA RWRRA'); // returns 'i <3 my puppy'
+
+Feel free to reference the Unicode Table as well as the JavaScript String methods including: toUpperCase(), toLowerCase(), charCodeAt() and fromCharCode()
+
+someStr.charCodeAt(index) returns the charCode at index of the string. the charCode is an integer between 0 and 65535 representing the UTF-16 code unit. 
+The UTF-16 code unit matches the Unicode code point for code points which can be represented in a single UTF-16 code unit.
+The first 128 Unicode code points are a direct match of the ASCII character encoding.
+in ASCII printable characters, decimals
+A-Z (65 to 90, includes 90) - for encrypt()
+a - z (97 - 122, includes 122) - for decrypt()
+return value - A number representing the UTF-16 code unit value of the character at the given index. If index is out of range, charCodeAt() returns NaN.
+
+*/
+
+class ShiftCipher{
+    constructor(message, shift){
+        this.shift=shift;
+        this.message=message;
+    }
+    encrypt(){
+        //takes a plain text string and returns a capitalized string with each letter shifted forward in the alphabet based on the set shift value.
+        //any character outside the alphabet should remain the same. But if a character is shifted outside the alphabet in either direction it should be wrapped around to the other side.
+        //e.g. encrypting with shift=4, y to C, decrypting with shift=1, A to z
+        if (this.shift===undefined || typeof this.shift !== 'number'){
+            return 'please input a number for the second argument!'
+        }
+
+        let message=this.message
+        message=message.toUpperCase()
+        
+        let symbolsArray = message.split('');
+        
+        const charCodesArray= symbolsArray.map(symbol=>{
+            //console.log(symbol.charCodeAt(0))
+            return symbol.charCodeAt(0);
+        });
+
+        /* wrap around is complicated by the need to pass both capitalized and lower case letters in the message argument. However, I won't have to deal with two encoding ranges
+        if i just turned every character to either upper case first. as I'd need to turn everything to uppercase in the end anyway.  */
+        
+        const encryptedCharCodesArray= charCodesArray.map(charCode=>{
+            const charMin=65;
+            const charMax=90
+            if(charCode < charMin || charCode> charMax){
+                return charCode // if char code not within this range, return charCode unchanged. 
+            }else if(charCode+this.shift>charMax){ 
+                const charCodeShifted=charCode+this.shift-charMax+charMin; //wraparound
+                return charCodeShifted;
+            }else{
+                const charCodeShifted=charCode+this.shift;
+                return charCodeShifted;
+            }
+        })
+        const encryptedArray=encryptedCharCodesArray.map(charCode=>{
+            return String.fromCharCode(charCode); // convert charCode to UTF-16 character. 
+        })
+        return encryptedArray.join(''); // join the converted array of string elements to one string. 
+    }
+    decrypt(){
+        //takes an encrypted message and returns a lower case string with each letter shifted back in the alphabet based on the set shift value.
+        //any character outside the alphabet should remain the same. But if a character is shifted outside the alphabet in either direction it should be wrapped around to the other side.
+        //e.g. encrypting with shift=4, y to C, decrypting with shift=1, A to z
+
+
+    }
+}
+
+encrypt1=new ShiftCipher('hello', 1);
+let a=1;
+encrypt2=new ShiftCipher('hELL0!£@',a);
+console.log(encrypt1.encrypt()); //expect IFMMP
+console.log(encrypt2.encrypt()); //expect IFMM0!£@
