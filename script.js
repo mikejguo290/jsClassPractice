@@ -46,4 +46,30 @@ class Player {
       console.log(`Player: ${this.name} -- Balllons Left: ${this.balloonCount}`)
     }
   }
+
+function balloonAttack(player1, player2){
+    
+    const player1Remaining=player1.balloonCount-10*player2.hitsPerMinute; 
+    /* remaining balloons can't be a negative number. 0 minimum. might think to use Math.max(0,x) but this allows someone with no balloons to keep shooting 
+    the other one! Remaining balloons has to be allowed to be negative to enable the comparison with the other player.*/
+    
+    const player2Remaining=player2.balloonCount-10*player1.hitsPerMinute; // player i's remaining balloons depends on how fast player j shoots down baloons! .hitsPerMinute.
+    
+    const diff = player1Remaining-player2Remaining;
+    if (diff===0){
+        return 'Tie';
+    }else if(diff>0){
+        return `${player1.name}`;
+    }else{
+        return `${player2.name}`;
+    };
+};
+
+// test code for challenge #2
+
+const p1 = new Player('p1', 5);
+const p2 = new Player('p2', 2);
+const winner = balloonAttack(p1, p2);
+console.log(winner);
+
   
