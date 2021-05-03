@@ -125,14 +125,22 @@ class ShiftCipher{
         //console.log(`before - ${charCodesArray}`);
         /* wrap around is complicated by the need to pass both capitalized and lower case letters in the message argument. However, I won't have to deal with two encoding ranges
         if i just turned every character to either upper case first. as I'd need to turn everything to uppercase in the end anyway.  */
-        
+        // one. limit the impact of this.shift
+        let adjustedShift;
+        if(this.shift>26 ){
+            adjustedShift=this.shift%26;// the remainder has to be smaller than 26, as the shift has to be smaller than 26. 
+        }else if (this.shift<-26){
+            adjustedShift=26-(Math.abs(this.shift%-26)); //this is the wrap around for shifts more negative than -26. convert to a positive shift, adjusted with 26-x. Math.abs() is used because modulo -x%-y returns a negative number!
+        }else if (this.shift<0){
+             adjustedShift=this.shift+26;
+        }else{
+            adjustedShift=this.shift;
+        };
+
         const encryptedCharCodesArray= charCodesArray.map(charCode=>{
             const charMin=65;
             const charMax=90
-            // one. limit the impact of this.shift
-            let adjustedShift = this.shift >26? this.shift%26: this.shift; // the remainder has to be smaller than 26, as the shift has to be smaller than 26. 
-            adjustedShift= adjustedShift<-26? adjustedShift%-26: adjustedShift+26; // deals with negative this.shift value, translate it into a forward shift instead. 
-            //console.log(adjustedShift)
+
             if(charCode < charMin || charCode> charMax){
                 return charCode // if char code not within this range, return charCode unchanged. 
             }else if(charCode+adjustedShift> charMax){
@@ -168,8 +176,18 @@ class ShiftCipher{
 
         const charMin=97;
         const charMax=122;
-        let adjustedShift=this.shift>26? this.shift%26: this.shift;
-        //adjustedShift=adjustedShift<0? negative shift is still not right
+        
+        let adjustedShift;
+        if(this.shift>26 ){
+            adjustedShift=this.shift%26;// the remainder has to be smaller than 26, as the shift has to be smaller than 26. 
+        }else if (this.shift<-26){
+            adjustedShift=26-(Math.abs(this.shift%-26)); //this is the wrap around for shifts more negative than -26. convert to a positive shift, adjusted with 26-x. Math.abs() is used because modulo -x%-y returns a negative number!
+        }else if (this.shift<0){
+             adjustedShift=this.shift+26;
+        }else{
+            adjustedShift=this.shift;
+        };
+
         const decryptedCharCodesArray=charCodesArray.map(charCode=>{
             if(charCode < charMin || charCode> charMax){
                 return charCode // if char code not within this range, return charCode unchanged. 
@@ -198,10 +216,10 @@ let a=1;
 const encrypt2=new ShiftCipher('hELL0!£@',a);
 const encrypt3=new ShiftCipher('wxyz', 5); // for z, char=charMax=90, charMin=60 , charCode+this.shift-charMax+charMin=60+5 = 65, that's 6 chars on from 60!. 
 const encrypt4=new ShiftCipher('wxyz', 31);
-const encrypt5=new ShiftCipher('wxyz', 57);
+const encrypt5=new ShiftCipher('wxyz', 57); 
 const encrypt6=new ShiftCipher('wxyz', -47);
-console.log(encrypt1.encrypt()); //expect IFMMP
-console.log(encrypt2.encrypt()); //expect IFMM0!£@
+//console.log(encrypt1.encrypt()); //expect IFMMP
+//console.log(encrypt2.encrypt()); //expect IFMM0!£@
 console.log(encrypt3.encrypt()); //expect BCDE
 console.log(encrypt4.encrypt()); //expect BCDE
 console.log(encrypt5.encrypt()); //expect BCDE
@@ -212,6 +230,10 @@ console.log(encrypt6.encrypt()); //expect BCDE
 const decrypt0=new ShiftCipher('IFMMP', 1)
 const decrypt1=new ShiftCipher('BCDE', 5)
 const decrypt3=new ShiftCipher('BCDE', 57)
+const decrypt4=new ShiftCipher('BCDE', -21)
+const decrypt5=new ShiftCipher('BCDE', -47)
 console.log(decrypt0.decrypt()); // expect hello
 console.log(decrypt1.decrypt()); // expect wxyz
 console.log(decrypt3.decrypt()); // expect wxyz
+console.log(decrypt4.decrypt()); // expect wxyz
+console.log(decrypt5.decrypt()); // expect wxyz
