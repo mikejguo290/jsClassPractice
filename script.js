@@ -101,11 +101,11 @@ return value - A number representing the UTF-16 code unit value of the character
 */
 
 class ShiftCipher{
-    constructor(message, shift){
+    constructor(shift){
         this.shift=shift;
-        this.message=message;
     }
-    encrypt(){
+
+    encrypt(message){
         //takes a plain text string and returns a capitalized string with each letter shifted forward in the alphabet based on the set shift value.
         //any character outside the alphabet should remain the same. But if a character is shifted outside the alphabet in either direction it should be wrapped around to the other side.
         //e.g. encrypting with shift=4, y to C, decrypting with shift=1, A to z
@@ -113,7 +113,6 @@ class ShiftCipher{
             return 'please input a number for the second argument!'
         }
 
-        let message=this.message
         message=message.toUpperCase()
         
         let symbolsArray = message.split('');
@@ -159,14 +158,13 @@ class ShiftCipher{
         })
         return encryptedArray.join(''); // join the converted array of string elements to one string. 
     }
-    decrypt(){
+    decrypt(message){
         //takes an encrypted message and returns a lower case string with each letter shifted back in the alphabet based on the set shift value.
         //any character outside the alphabet should remain the same. But if a character is shifted outside the alphabet in either direction it should be wrapped around to the other side.
         //e.g. encrypting with shift=4, y to C, decrypting with shift=1, A to z
         if (this.shift===undefined || typeof this.shift !== 'number'){
             return 'please input a number for the second argument!'
         }
-        let message=this.message;
         message=message.toLowerCase();
         
         // convert message to an array of charCodes, manipulates charCodes, return an array of decrypted charCodes, then of decrypted chars. lastly return just one string 
@@ -211,29 +209,27 @@ class ShiftCipher{
 
 //test code for challenge #3 
 //encrypt test
-const encrypt1=new ShiftCipher('hello', 1);
-let a=1;
-const encrypt2=new ShiftCipher('hELL0!£@',a);
-const encrypt3=new ShiftCipher('wxyz', 5); // for z, char=charMax=90, charMin=60 , charCode+this.shift-charMax+charMin=60+5 = 65, that's 6 chars on from 60!. 
-const encrypt4=new ShiftCipher('wxyz', 31);
-const encrypt5=new ShiftCipher('wxyz', 57); 
-const encrypt6=new ShiftCipher('wxyz', -47);
+const cipher=new ShiftCipher(1);
+const encrypt3=new ShiftCipher(5); // for z, char=charMax=90, charMin=60 , charCode+this.shift-charMax+charMin=60+5 = 65, that's 6 chars on from 60!. 
+const encrypt4=new ShiftCipher(31);
+const encrypt5=new ShiftCipher(57); 
+const encrypt6=new ShiftCipher(-47);
 //console.log(encrypt1.encrypt()); //expect IFMMP
 //console.log(encrypt2.encrypt()); //expect IFMM0!£@
-console.log(encrypt3.encrypt()); //expect BCDE
-console.log(encrypt4.encrypt()); //expect BCDE
-console.log(encrypt5.encrypt()); //expect BCDE
-console.log(encrypt6.encrypt()); //expect BCDE
-
+console.log(encrypt3.encrypt('wxyz')); //expect BCDE
+console.log(encrypt4.encrypt('wxyz')); //expect BCDE
+console.log(encrypt5.encrypt('wxyz')); //expect BCDE
+console.log(encrypt6.encrypt('wxyz')); //expect BCDE
+console.log(cipher.encrypt('z')); //expect 'A'
 
 // decrypt test
-const decrypt0=new ShiftCipher('IFMMP', 1)
-const decrypt1=new ShiftCipher('BCDE', 5)
-const decrypt3=new ShiftCipher('BCDE', 57)
-const decrypt4=new ShiftCipher('BCDE', -21)
-const decrypt5=new ShiftCipher('BCDE', -47)
-console.log(decrypt0.decrypt()); // expect hello
-console.log(decrypt1.decrypt()); // expect wxyz
-console.log(decrypt3.decrypt()); // expect wxyz
-console.log(decrypt4.decrypt()); // expect wxyz
-console.log(decrypt5.decrypt()); // expect wxyz
+const decrypt0=new ShiftCipher(1)
+const decrypt1=new ShiftCipher(5)
+const decrypt3=new ShiftCipher(57)
+const decrypt4=new ShiftCipher(-21)
+const decrypt5=new ShiftCipher(-47)
+console.log(decrypt0.decrypt('IFMMP')); // expect hello
+console.log(decrypt1.decrypt('BCDE')); // expect wxyz
+console.log(decrypt3.decrypt('BCDE')); // expect wxyz
+console.log(decrypt4.decrypt('BCDE')); // expect wxyz
+console.log(decrypt5.decrypt('BCDE')); // expect wxyz
